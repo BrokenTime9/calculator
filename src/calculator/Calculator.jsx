@@ -1,48 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Calculator = () => {
   const [input, setInput] = useState("");
-  const [items, setItems] = useState([]);
-  const [result, setResult] = useState(0);
-  const [display, setDisplay] = useState(true);
+  const [result, setResult] = useState("");
+
   const handleClick = (e) => {
     const val = e.target.innerText;
-
-    if (val === "+" && input.length >= 1) {
-      setItems((prevItems) => [...prevItems, val, "+"]);
-      setInput("");
-    } else if (val === "-" && input.length >= 1) {
-      setItems((prevItems) => [...prevItems, val, "-"]);
-      setInput("");
-    } else if (val === "*" && input.length >= 1) {
-      setItems((prevItems) => [...prevItems, val, "*"]);
-      setInput("");
-    } else if (val === "/" && input.length >= 1) {
-      setItems((prevItems) => [...prevItems, val, "/"]);
-      setInput("");
-    } else {
-      setInput((prevInput) => prevInput + val);
-    }
-    console.log(items);
+    setInput((prevInput) => prevInput + val);
   };
 
   const calc = () => {
-    let firstItem = parseFloat(items[0]);
-    for (let i = 0; i < items.length - 1; i++) {
-      let currentItem = items[i];
-      let nextItem = parseFloat(items[i - 1]);
-      console.log(firstItem);
-
-      if (currentItem === "+") firstItem += nextItem;
-      if (currentItem === "-") firstItem -= nextItem;
-      if (currentItem === "*") firstItem *= nextItem;
-      if (currentItem === "/") firstItem /= nextItem;
+    handleBackspace();
+    try {
+      const evalResult = eval(input);
+      setResult(evalResult);
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    setResult(firstItem);
+  const handleBackspace = () => {
+    setInput((prevInput) => {
+      const op = ["+", "-", "*", "/"];
+      if (op.includes(prevInput.slice(-1))) {
+        return prevInput.slice(0, -1);
+      }
+      return prevInput;
+    });
+  };
 
-    setInput(result.toString());
-    setItems([]);
+  const handleOrigin = () => {
+    setInput("");
+  };
+  const handleBack = () => {
+    setInput((prevInput) => prevInput.slice(0, -1));
   };
 
   return (
@@ -109,6 +100,12 @@ const Calculator = () => {
           </div>
           <div onClick={handleClick} className="calc-btn">
             /
+          </div>
+          <div onClick={handleBack} className="calc-btn">
+            del
+          </div>
+          <div onClick={handleOrigin} className="calc-btn">
+            c
           </div>
         </div>
       </div>
